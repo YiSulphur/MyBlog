@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% block content %}
+<div class="page-header">
+    <h1>Posts
+        <small class="text-muted">{{ pagination.total }}</small>
+        <span class="float-right"><a class="btn btn-primary btn-sm"
+                                     href="{{ url_for('.new_post') }}">New Post</a></span>
+    
+{%if request.cookies.get('theme','perfect_blue')=='perfect_blue'%}
+
+<span class="float-right"><a class="btn btn-primary btn-sm"
+                                     href="{{ url_for('change_theme', theme_name='black_swan', next=request.full_path) }}">Black Swan</a></span>
+{%else%}
+<span class="float-right"><a class="btn btn-primary btn-sm"
+                                     href="{{ url_for('change_theme', theme_name='perfect_blue', next=request.full_path) }}">Perfect Blue</a></span>
+{%endif%}
+</h1>
+</div>
+
+    <div class="row">
+        <div class="col-sm-8">
+            {% include '_posts.html' %}
+            {% if posts %}
+                <div class="page-footer">{{ render_pagination(pagination) }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

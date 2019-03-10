@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ post.title }}
+            <span class="float-right"></span>
+        </h1>
+        <small>
+            <br>
+            Date: {{ moment(post.timestamp).format('LL') }}
+        </small>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            {{ post.body|safe }}
+            <hr>
+            <div class="comments" id="comments">
+                <h3>{{ pagination.total }} Comments
+                    <small>
+                        <a href="{{ url_for('.show_post', post_id=post.id, page=pagination.pages or 1) }}#comments">
+                            latest</a>
+                    </small>
+                    
+                </h3>
+                {% if comments %}
+                    <ul class="list-group">
+                        {% for comment in comments %}
+                            <li class="list-group-item list-group-item-action flex-column">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">
+                                        <a href=""
+                                           target="_blank">
+                                                {{ comment.author }}
+                                        </a>
+                                            <span class="badge badge-primary">Author</span>
+                                    </h5>
+                                    <small data-toggle="tooltip" data-placement="top" data-delay="500"
+                                           data-timestamp="{{ comment.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
+                                        {{ moment(comment.timestamp).fromNow() }}
+                                    </small>
+                                </div>
+                                <p class="mb-1"><strong>{{ comment.body }}</strong></p>
+                                
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="tip"><h5>No comments.</h5></div>
+                {% endif %}
+            </div>
+	{%if current_user.is_authenticated %}
+			<div id="comment-form">
+                   	 {{ render_form(form, action=request.full_path) }}
+                	</div>
+	{%endif%}
+            {% if comments %}
+                {{ render_pagination(pagination, fragment='#comments') }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
